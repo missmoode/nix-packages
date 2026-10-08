@@ -1,0 +1,101 @@
+{
+  "nodes": {
+    "funchook": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1685868198,
+        "narHash": "sha256-u/RXMNyKL6L7p5gEFnAQTErPXXGKXv74jbYlBbG0Wy4=",
+        "ref": "refs/tags/v1.1.3",
+        "rev": "88388db3c69e16c1560fee65c6857d75f5ce6fd5",
+        "revCount": 167,
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/kubo/funchook.git"
+      },
+      "original": {
+        "ref": "refs/tags/v1.1.3",
+        "submodules": true,
+        "type": "git",
+        "url": "https://github.com/kubo/funchook.git"
+      }
+    },
+    "luabridge3": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789100160,
+        "narHash": "sha256-09sjxnCl1ZOJHTFUIBhwpR4zK6+uCScknjE7YDlUvJw=",
+        "owner": "TwilitRealm",
+        "repo": "LuaBridge3",
+        "rev": "06ef10a0a740370f07096928d41fe23eb5a133cb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TwilitRealm",
+        "ref": "twilit-v1",
+        "repo": "LuaBridge3",
+        "type": "github"
+      }
+    },
+    "luau": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786729534,
+        "narHash": "sha256-s3UdKdMVc7PNKZpD+ZutC/+ux3UsGW7HSDjhbagTJgM=",
+        "owner": "luau-lang",
+        "repo": "luau",
+        "rev": "3fc82b1071ab387531175869afc4fb528464afa4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "luau-lang",
+        "ref": "0.734",
+        "repo": "luau",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1791260994,
+        "narHash": "sha256-Miqqk/ammqnTUxaoCyvtwoPeLbI1ksFyLxi/CazZpWY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "151fa4e8ddfdd8dd25d945ad94ed54a13de9f6e4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "funchook": "funchook",
+        "luabridge3": "luabridge3",
+        "luau": "luau",
+        "nixpkgs": "nixpkgs",
+        "symgen": "symgen"
+      }
+    },
+    "symgen": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789531590,
+        "narHash": "sha256-QSUGZsqnR9I50crc/XC5TAKqoGiNswd+mXl702RJLsM=",
+        "owner": "encounter",
+        "repo": "symgen",
+        "rev": "929fd8238f63639b250a1f2527a8ef6898f7d590",
+        "type": "github"
+      },
+      "original": {
+        "owner": "encounter",
+        "ref": "v1.3.6",
+        "repo": "symgen",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
