@@ -1,0 +1,13 @@
+{
+  "version": "2.0.3",
+  "assets": {
+    "aarch64-linux": {
+      "arch": "arm64",
+      "hash": "sha256-f31yBUhHJ3r8zd25P3zKTjtzB2jaZOMKTN1ndMI72/k="
+    },
+    "x86_64-linux": {
+      "arch": "x86_64",
+      "hash": "sha256-h+wlGWPJhK0rOsB1KBQx0iIdsil9wZ8qtdqtkulp/AY="
+    }
+  }
+}

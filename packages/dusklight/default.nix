@@ -1,86 +1,41 @@
 {
   lib,
-  pkgs,
-  sources,
-  rustPlatform,
-  curl,
+  stdenv,
+  fetchurl,
+  appimageTools,
 }:
-
 let
-  symgen = rustPlatform.buildRustPackage {
-    pname = "symgen";
-    version = "1.3.6";
+  release = builtins.fromJSON (builtins.readFile ./release.json);
+  pname = "dusklight";
+  inherit (release) version;
+  asset = release.assets.${stdenv.hostPlatform.system};
 
-    src = sources.symgen;
-
-    cargoLock.lockFile = "${sources.symgen}/Cargo.lock";
-
-    postPatch = ''
-      cat > build.rs <<'EOF'
-      fn main() {
-          println!("cargo:rustc-env=GIT_COMMIT_SHA=${sources.symgen.rev or "unknown"}");
-      }
-      EOF
-    '';
-
-    doCheck = false;
+  src = fetchurl {
+    url = "https://github.com/TwilitRealm/dusklight/releases/download/v${version}/Dusklight-v${version}-linux-${asset.arch}.AppImage";
+    hash = asset.hash;
   };
 in
-pkgs.dusklight.overrideAttrs (old: {
-  # The mod-enabled build has additional source dependencies.
-  # Restrict this override to the architecture we've targeted.
-  meta = (old.meta or { }) // {
-    platforms = [ "x86_64-linux" ];
-  };
+appimageTools.wrapType2 (finalAttrs: {
+  inherit pname version src;
 
-  buildInputs = (old.buildInputs or [ ]) ++ [
-    curl
-  ];
+  extraInstallCommands = ''
+    install -Dm644 \
+      "${finalAttrs.contents}/usr/share/applications/dev.twilitrealm.dusk.desktop" \
+      "$out/share/applications/dev.twilitrealm.dusk.desktop"
 
-  # Preserve the upstream Nixpkgs patch and prevent configuration
-  # of in-tree mods, which require additional vendored sources.
-  # Aside from adding luau.
-  # This does not disable loading user-installed native mods.
-  postPatch = (old.postPatch or "") + ''
-    # Don't configure every in-tree mod.
-    substituteInPlace CMakeLists.txt \
-      --replace-fail \
-      'if (DUSK_ENABLE_CODE_MODS AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)' \
-      'if (DUSK_ENABLE_CODE_MODS AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND NOT DUSK_NIX_SKIP_IN_TREE_MODS)'
-
-    # Build Luau Support independently of the other in-tree mods.
-    substituteInPlace CMakeLists.txt \
-      --replace-fail \
-      'include(cmake/ModSDK.cmake)' \
-      'include(cmake/ModSDK.cmake)
-      add_subdirectory(mods/luau_runtime)'
+    mkdir -p "$out/share/icons"
+    cp -r "${finalAttrs.contents}/usr/share/icons/hicolor" "$out/share/icons/"
   '';
 
-  cmakeFlags =
-    lib.filter (
-      flag:
-      !(lib.hasPrefix "-DDUSK_ENABLE_CODE_MODS:" flag || lib.hasPrefix "-DBOREALIS_HTTP_BACKEND:" flag)
-    ) old.cmakeFlags
-    ++ [
-      (lib.cmakeBool "DUSK_ENABLE_CODE_MODS" true)
-      (lib.cmakeBool "DUSK_NIX_SKIP_IN_TREE_MODS" true)
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LUAU" "${sources.luau}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_LUABRIDGE3" "${sources.luabridge3}")
-      (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_FUNCHOOK" "${sources.funchook}")
-
-      (lib.cmakeFeature "SYMGEN_PATH" "${symgen}/bin/symgen")
-
-      (lib.cmakeFeature "BOREALIS_HTTP_BACKEND" "curl")
+  meta = {
+    description = "Reverse-engineered reimplementation of The Legend of Zelda: Twilight Princess";
+    homepage = "https://github.com/TwilitRealm/dusklight";
+    changelog = "https://github.com/TwilitRealm/dusklight/releases/tag/v${version}";
+    license = lib.licenses.cc0;
+    mainProgram = pname;
+    platforms = [
+      "x86_64-linux"
+      "aarch64-linux"
     ];
-
-  # Keep the linked binary intact after Symgen embeds its manifest.
-  dontStrip = true;
-
-  postInstall = (old.postInstall or "") + ''
-    # Install Luau Support as a bundled, read-only mod.
-    install -d "$out/share/dusklight/mods/dev.twilitrealm.luau"
-
-    cp -r mods/luau_runtime/luau_runtime_stage/. \
-      "$out/share/dusklight/mods/dev.twilitrealm.luau/"
-  '';
+  };
 })
